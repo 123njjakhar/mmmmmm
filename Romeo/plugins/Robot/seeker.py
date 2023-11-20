@@ -10,7 +10,7 @@ from Romeo.utils.formatters import seconds_to_min
 from Romeo.utils.inline import (stream_markup_timer,
                                      telegram_markup_timer)
 
-from Romeo.plugins.Robot.callback import wrong
+from Romeo.plugins.callback import wrong
 
 checker = {}
 

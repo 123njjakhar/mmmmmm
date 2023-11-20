@@ -11,8 +11,8 @@ from config.config import OWNER_ID
 from strings import get_command, get_string
 from Romeo import Telegram, YouTube, app
 from Romeo.misc import SUDOERS
-from Romeo.plugins.Robot.playlist import del_plist_msg
-from Romeo.plugins.Robot.sudoers import sudoers_list
+from Romeo.plugins.playlist import del_plist_msg
+from Romeo.plugins.sudoers import sudoers_list
 from Romeo.utils.database import (add_served_chat,
                                        add_served_user,
                                        blacklisted_chats,

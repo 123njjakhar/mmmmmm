@@ -1,4 +1,4 @@
-"""
+'''
 
 from pyrogram import Client, filters
 from pyrogram.types import *
@@ -8,19 +8,7 @@ import random
 import os
 import re
 from config.config import API_ID, API_HASH, BOT_TOKEN, STRING1, MONGO_DB_URI
-from Romeo import app
-
-
-API_ID = API_ID
-API_HASH = API_HASH
-STRING = STRING1
-BOT_TOKEN = BOT_TOKEN
-MONGO_URL = MONGO_DB_URI
-
-bot = app
-
-#bot = Client(STRING, API_ID, API_HASH)
-
+from Romeo import app as bot
 
 async def is_admins(chat_id: int):
     return [
@@ -35,8 +23,8 @@ async def is_admins(chat_id: int):
     filters.command("chatbot off", prefixes=["/", ".", "?", "-"])
     & ~filters.private)
 async def chatbotofd(client, message):
-    vickdb = MongoClient(MONGO_URL)    
-    vick = vickdb["VickDb"]["Vick"]     
+    Romeodb = MongoClient(MONGO_DB_URI)    
+    Romeo = Romeodb["RomeoDb"]["Romeo"]     
     if message.from_user:
         user = message.from_user.id
         chat_id = message.chat.id
@@ -46,20 +34,20 @@ async def chatbotofd(client, message):
            return await message.reply_text(
                 "You are not admin"
             )
-    is_vick = vick.find_one({"chat_id": message.chat.id})
-    if not is_vick:
-        vick.insert_one({"chat_id": message.chat.id})
-        await message.reply_text(f"Chatbot Disabled!")
-    if is_vick:
-        await message.reply_text(f"ChatBot Is Already Disabled")
+    is_Romeo = Romeo.find_one({"chat_id": message.chat.id})
+    if not is_Romeo:
+        Romeo.insert_one({"chat_id": message.chat.id})
+        await message.reply_text(f"Romeo-AI Disabled!")
+    if is_Logic:
+        await message.reply_text(f"Romeo-AI Is Already Disabled")
     
 
 @bot.on_message(
     filters.command("chatbot on", prefixes=["/", ".", "?", "-"])
     & ~filters.private)
 async def chatboton(client, message):
-    vickdb = MongoClient(MONGO_URL)    
-    vick = vickdb["VickDb"]["Vick"]     
+    Romeodb = MongoClient(MONGO_DB_URI)    
+    Romeo = Romeodb["RomeoDb"]["Romeo"]     
     if message.from_user:
         user = message.from_user.id
         chat_id = message.chat.id
@@ -69,19 +57,19 @@ async def chatboton(client, message):
             return await message.reply_text(
                 "You are not admin"
             )
-    is_vick = vick.find_one({"chat_id": message.chat.id})
-    if not is_vick:           
-        await message.reply_text(f"Chatbot Is Already Enabled")
-    if is_vick:
-        vick.delete_one({"chat_id": message.chat.id})
-        await message.reply_text(f"ChatBot Is Enable!")
+    is_Romeo = Logic.find_one({"chat_id": message.chat.id})
+    if not is_Romeo:           
+        await message.reply_text(f"Romeo-AI Is Already Enabled")
+    if is_Romeo:
+        Logic.delete_one({"chat_id": message.chat.id})
+        await message.reply_text(f"Romeo-AI Is Enabled!")
     
 
 @bot.on_message(
     filters.command("chatbot", prefixes=["/", ".", "?", "-"])
     & ~filters.private)
 async def chatbot(client, message):
-    await message.reply_text(f"**Usage:**\n/chatbot [on|off] only group")
+    await message.reply_text(f"**Usage:**\n/chatbot [on|off] only in groups.")
 
 
 @bot.on_message(
@@ -92,16 +80,16 @@ async def chatbot(client, message):
     & ~filters.private
     & ~filters.bot,
 )
-async def vickai(client: Client, message: Message):
+async def Logicai(client: Client, message: Message):
 
-   chatdb = MongoClient(MONGO_URL)
+   chatdb = MongoClient(MONGO_DB_URI)
    chatai = chatdb["Word"]["WordDb"]   
 
    if not message.reply_to_message:
-       vickdb = MongoClient(MONGO_URL)
-       vick = vickdb["VickDb"]["Vick"] 
-       is_vick = vick.find_one({"chat_id": message.chat.id})
-       if not is_vick:
+       Romeodb = MongoClient(MONGO_DB_URI)
+       Romeo = Romeodb["RomeoDb"]["Romeo"] 
+       is_Romeo = Romeo.find_one({"chat_id": message.chat.id})
+       if not is_Romeo:
            await bot.send_chat_action(message.chat.id, "typing")
            K = []  
            is_chat = chatai.find({"word": message.text})  
@@ -118,13 +106,13 @@ async def vickai(client: Client, message: Message):
                    await message.reply_text(f"{hey}")
    
    if message.reply_to_message:  
-       vickdb = MongoClient(MONGO_URL)
-       vick = vickdb["VickDb"]["Vick"] 
-       is_vick = vick.find_one({"chat_id": message.chat.id})    
+       Romeodb = MongoClient(MONGO_DB_URI)
+       Romeo = Romeodb["LogicDb"]["Logic"] 
+       is_Romeo = Romeo.find_one({"chat_id": message.chat.id})    
        getme = await bot.get_me()
        bot_id = getme.id                             
        if message.reply_to_message.from_user.id == bot_id: 
-           if not is_vick:                   
+           if not is_Romeo:                   
                await bot.send_chat_action(message.chat.id, "typing")
                K = []  
                is_chat = chatai.find({"word": message.text})
@@ -158,16 +146,16 @@ async def vickai(client: Client, message: Message):
     & ~filters.private
     & ~filters.bot,
 )
-async def vickstickerai(client: Client, message: Message):
+async def Logicstickerai(client: Client, message: Message):
 
-   chatdb = MongoClient(MONGO_URL)
+   chatdb = MongoClient(MONGO_DB_URI)
    chatai = chatdb["Word"]["WordDb"]   
 
    if not message.reply_to_message:
-       vickdb = MongoClient(MONGO_URL)
-       vick = vickdb["VickDb"]["Vick"] 
-       is_vick = vick.find_one({"chat_id": message.chat.id})
-       if not is_vick:
+       Romeodb = MongoClient(MONGO_DB_URI)
+       Romeo = Romeodb["RomeoDb"]["Romeo"] 
+       is_Romeo = Romeo.find_one({"chat_id": message.chat.id})
+       if not is_Romeo:
            await bot.send_chat_action(message.chat.id, "typing")
            K = []  
            is_chat = chatai.find({"word": message.sticker.file_unique_id})      
@@ -184,13 +172,13 @@ async def vickstickerai(client: Client, message: Message):
                    await message.reply_sticker(f"{hey}")
    
    if message.reply_to_message:
-       vickdb = MongoClient(MONGO_URL)
-       vick = vickdb["VickDb"]["Vick"] 
-       is_vick = vick.find_one({"chat_id": message.chat.id})
+       Romeodb = MongoClient(MONGO_DB_URI)
+       Romeo = Romeodb["RomeoDb"]["Romeo"] 
+       is_Romeo = Romeo.find_one({"chat_id": message.chat.id})
        getme = await bot.get_me()
        bot_id = getme.id
        if message.reply_to_message.from_user.id == bot_id: 
-           if not is_vick:                    
+           if not is_Romeo:                    
                await bot.send_chat_action(message.chat.id, "typing")
                K = []  
                is_chat = chatai.find({"word": message.text})
@@ -225,9 +213,9 @@ async def vickstickerai(client: Client, message: Message):
     & filters.private
     & ~filters.bot,
 )
-async def vickprivate(client: Client, message: Message):
+async def Romeoprivate(client: Client, message: Message):
 
-   chatdb = MongoClient(MONGO_URL)
+   chatdb = MongoClient(MONGO_DB_URI)
    chatai = chatdb["Word"]["WordDb"]
    if not message.reply_to_message: 
        await bot.send_chat_action(message.chat.id, "typing")
@@ -268,9 +256,9 @@ async def vickprivate(client: Client, message: Message):
     & filters.private
     & ~filters.bot,
 )
-async def vickprivatesticker(client: Client, message: Message):
+async def Logicprivatesticker(client: Client, message: Message):
 
-   chatdb = MongoClient(MONGO_URL)
+   chatdb = MongoClient(MONGO_DB_URI)
    chatai = chatdb["Word"]["WordDb"] 
    if not message.reply_to_message:
        await bot.send_chat_action(message.chat.id, "typing")
@@ -302,6 +290,4 @@ async def vickprivatesticker(client: Client, message: Message):
            if not Yo == "text":
                await message.reply_sticker(f"{hey}")
 
-#bot.run()
-
-"""
+'''

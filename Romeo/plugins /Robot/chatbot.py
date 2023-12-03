@@ -1,5 +1,4 @@
 '''
-
 from pyrogram import Client, filters
 from pyrogram.types import *
 from pymongo import MongoClient
@@ -7,8 +6,8 @@ import requests
 import random
 import os
 import re
-import config
-from Romeo import app 
+from config.config import API_ID, API_HASH, BOT_TOKEN, STRING1, MONGO_DB_URI
+from Romeo import app as bot
 
 async def is_admins(chat_id: int):
     return [
@@ -19,7 +18,7 @@ async def is_admins(chat_id: int):
     ]
 
 
-@app.on_message(filters.command("chatbot off", ["/", ".", "?", "-"]) & ~filters.private)
+@bot.on_message(filters.command("chatbot off", ["/", ".", "?", "-"]) & ~filters.private)
 async def chatbotofd(client, message):
     Romeodb = MongoClient(MONGO_DB_URI)    
     Romeo = Romeodb["RomeoDb"]["Romeo"]     
@@ -38,9 +37,9 @@ async def chatbotofd(client, message):
         await message.reply_text(f"Romeo-AI Disabled!")
     if is_Romeo:
         await message.reply_text(f"Romeo-AI Is Already Disabled")
-    
 
-@app.on_message(filters.command("chatbot on", ["/", ".", "?", "-"])
+
+@bot.on_message(filters.command("chatbot on", ["/", ".", "?", "-"])
 async def chatboton(client, message):
     Romeodb = MongoClient(MONGO_DB_URI)    
     Romeo = Romeodb["RomeoDb"]["Romeo"]     
@@ -53,20 +52,20 @@ async def chatboton(client, message):
             return await message.reply_text(
                 "You are not admin"
             )
-    is_Romeo = Romeo.find_one({"chat_id": message.chat.id})
+    is_Romeo = Logic.find_one({"chat_id": message.chat.id})
     if not is_Romeo:           
         await message.reply_text(f"Romeo-AI Is Already Enabled")
     if is_Romeo:
-        Romeo.delete_one({"chat_id": message.chat.id})
+        Logic.delete_one({"chat_id": message.chat.id})
         await message.reply_text(f"Romeo-AI Is Enabled!")
-    
 
-@app.on_message(filters.command("chatbot", ["/", ".", "?", "-"])
+
+@bot.on_message(filters.command("chatbot", ["/", ".", "?", "-"])
 async def chatbot(client, message):
     await message.reply_text(f"**Usage:**\n/chatbot [on|off] only in groups.")
 
 
-@app.on_message((filters.text | filters.sticker) & ~filters.private)
+@bot.on_message((filters.text | filters.sticker) & ~filters.private)
 async def Romeoai(client: Client, message: Message):
 
    chatdb = MongoClient(MONGO_DB_URI)
@@ -77,6 +76,7 @@ async def Romeoai(client: Client, message: Message):
        Romeo = Romeodb["RomeoDb"]["Romeo"] 
        is_Romeo = Romeo.find_one({"chat_id": message.chat.id})
        if not is_Romeo:
+           await bot.send_chat_action(message.chat.id, "typing")
            K = []  
            is_chat = chatai.find({"word": message.text})  
            k = chatai.find_one({"word": message.text})      
@@ -99,6 +99,7 @@ async def Romeoai(client: Client, message: Message):
        bot_id = getme.id                             
        if message.reply_to_message.from_user.id == bot_id: 
            if not is_Romeo:                   
+               await bot.send_chat_action(message.chat.id, "typing")
                K = []  
                is_chat = chatai.find({"word": message.text})
                k = chatai.find_one({"word": message.text})      
@@ -120,11 +121,10 @@ async def Romeoai(client: Client, message: Message):
            if message.text:                 
                is_chat = chatai.find_one({"word": message.reply_to_message.text, "text": message.text})                 
                if not is_chat:
-                   chatai.insert_one({"word": message.reply_to_message.text, "text": message.text, "check": "none"})    
-               
+                   chatai.insert_one({"word": message.reply_to_message.text, "text": message.text, "check": "none"})   
 
-@app.on_message((filters.sticker | filters.text))
-async def Logicstickerai(client: Client, message: Message):
+@bot.on_message((filters.sticker | filters.text))
+async def Romeostickerai(client: Client, message: Message):
 
    chatdb = MongoClient(MONGO_DB_URI)
    chatai = chatdb["Word"]["WordDb"]   
@@ -134,6 +134,7 @@ async def Logicstickerai(client: Client, message: Message):
        Romeo = Romeodb["RomeoDb"]["Romeo"] 
        is_Romeo = Romeo.find_one({"chat_id": message.chat.id})
        if not is_Romeo:
+           await bot.send_chat_action(message.chat.id, "typing")
            K = []  
            is_chat = chatai.find({"word": message.sticker.file_unique_id})      
            k = chatai.find_one({"word": message.text})      
@@ -156,6 +157,7 @@ async def Logicstickerai(client: Client, message: Message):
        bot_id = getme.id
        if message.reply_to_message.from_user.id == bot_id: 
            if not is_Romeo:                    
+               await bot.send_chat_action(message.chat.id, "typing")
                K = []  
                is_chat = chatai.find({"word": message.text})
                k = chatai.find_one({"word": message.text})      
@@ -177,16 +179,16 @@ async def Logicstickerai(client: Client, message: Message):
            if message.sticker:                 
                is_chat = chatai.find_one({"word": message.reply_to_message.sticker.file_unique_id, "text": message.sticker.file_id})                 
                if not is_chat:
-                   chatai.insert_one({"word": message.reply_to_message.sticker.file_unique_id, "text": message.sticker.file_id, "check": "none"})    
-               
+                   chatai.insert_one({"word": message.reply_to_message.sticker.file_unique_id, "text": message.sticker.file_id, "check": "none"})  
 
 
-@app.on_message((filters.text | filters.sticker) & filters.private)
+@bot.on_message((filters.text | filters.sticker) & filters.private)
 async def Romeoprivate(client: Client, message: Message):
 
    chatdb = MongoClient(MONGO_DB_URI)
    chatai = chatdb["Word"]["WordDb"]
    if not message.reply_to_message: 
+       await bot.send_chat_action(message.chat.id, "typing")
        K = []  
        is_chat = chatai.find({"word": message.text})                 
        for x in is_chat:
@@ -202,6 +204,7 @@ async def Romeoprivate(client: Client, message: Message):
        getme = await bot.get_me()
        bot_id = getme.id       
        if message.reply_to_message.from_user.id == bot_id:                    
+           await bot.send_chat_action(message.chat.id, "typing")
            K = []  
            is_chat = chatai.find({"word": message.text})                 
            for x in is_chat:
@@ -213,14 +216,15 @@ async def Romeoprivate(client: Client, message: Message):
                await message.reply_sticker(f"{hey}")
            if not Yo == "sticker":
                await message.reply_text(f"{hey}")
-       
 
-@app.on_message((filters.sticker | filters.text) & filters.private)
+
+@bot.on_message((filters.sticker | filters.text) & filters.private)
 async def Romeoprivatesticker(client: Client, message: Message):
 
    chatdb = MongoClient(MONGO_DB_URI)
    chatai = chatdb["Word"]["WordDb"] 
    if not message.reply_to_message:
+       await bot.send_chat_action(message.chat.id, "typing")
        K = []  
        is_chat = chatai.find({"word": message.sticker.file_unique_id})                 
        for x in is_chat:
